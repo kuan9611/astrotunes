@@ -3,6 +3,13 @@ import View from './View';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: {},
+    };
+  }
+
   componentWillMount() {
     const csvPath = require('./catalog.csv');
     const Papa = require('papaparse/papaparse.min.js');
@@ -29,23 +36,17 @@ class App extends Component {
       dist: p.semi_major_axis,
       star: p.star_name,
     }))
-    .reduce((rv, x) => {
-      (rv[x.star] = rv[x.star] || []).push(x);
-      return rv;
+    .reduce((res, p) => {
+      (res[p.star] = res[p.star] || []).push(p);
+      return res;
     }, {});
     this.setState({ data });
-    console.log(data);
-    // const count = [0,0,0,0,0,0,0,0,0,0];
-    // Object.keys(data).forEach(k => {
-    //   count[data[k].length]++;
-    // });
-    // console.log(count);
   }
 
   render() {
     return (
       <div className="App">
-        <View />
+        <View data={this.state.data} />
       </div>
     );
   }
