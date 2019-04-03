@@ -17,9 +17,10 @@ class View extends Component {
 
   redraw() {
     clearInterval(this.interval);
+    const t0 = new Date().setHours(0,0,0,0);
 
-    const w = 960;
-    const h = 600;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
 
     let planets = [];
     Object.keys(this.props.data).forEach(k => {
@@ -44,7 +45,11 @@ class View extends Component {
       .attr("id", "sun");
 
     const container = svg.append("g")
-      .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
+      .attr("transform", "translate(" + w/2 + "," + h/2 + ")")
+      .call(d3.behavior.zoom().on("zoom", () => {
+        svg.selectAll(".orbit").attr("r", d => d.R * d3.event.scale);
+        svg.selectAll(".planet").attr("cx", d => d.R * d3.event.scale);
+      }));
 
     container.selectAll(".orbit").data(planets).enter()
       .append("circle")
@@ -59,10 +64,9 @@ class View extends Component {
         .attr("class", "planet");
 
     this.interval = setInterval(() => {
-      const delta = Date.now() - new Date().setHours(0,0,0,0);
       svg.selectAll(".planet_cluster")
         .attr("transform", d => {
-          return "rotate(" + (d.phi0 + delta * d.speed) + ")";
+          return "rotate(" + (d.phi0 + (Date.now() - t0) * d.speed) + ")";
         });
     }, 100);
   }

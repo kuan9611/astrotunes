@@ -3,6 +3,7 @@ body {
   width: 960px;
   height: 500px;
   position: relative;
+  overflow: hidden;
 }
 
 #sun {
@@ -11,7 +12,7 @@ body {
 }
 
 .orbit {
-  stroke: #ccc;
+  stroke: #eee;
   fill: transparent;
 }
 
