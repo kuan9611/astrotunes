@@ -23,19 +23,23 @@ class View extends Component {
     const h = window.innerHeight;
 
     let planets = [];
-    Object.keys(this.props.data).forEach(k => {
-      planets.push(this.props.data[k].map(x => ({
-        R: x.dist * 100,
-        r: Math.sqrt(x.mass),
-        speed: 1/x.period,
-        phi0: 0,
+    this.props.data.forEach(x => {
+      planets.push(x.planets.map(p => ({
+        R: p.dist * 100,
+        r: Math.sqrt(p.mass) || p.radius,
+        speed: 0.1/p.period,
+        name: p.name,
       })));
     });
     planets = planets.flat();
 
     const svg = d3.select(this.node.current)
       .attr("width", w)
-      .attr("height", h);
+      .attr("height", h)
+      .call(d3.behavior.zoom().on("zoom", () => {
+        svg.selectAll(".orbit").attr("r", d => d.R * d3.event.scale);
+        svg.selectAll(".planet").attr("cx", d => d.R * d3.event.scale);
+      }));
     svg.selectAll("*").remove();
 
     svg.append("circle")
@@ -45,11 +49,7 @@ class View extends Component {
       .attr("id", "sun");
 
     const container = svg.append("g")
-      .attr("transform", "translate(" + w/2 + "," + h/2 + ")")
-      .call(d3.behavior.zoom().on("zoom", () => {
-        svg.selectAll(".orbit").attr("r", d => d.R * d3.event.scale);
-        svg.selectAll(".planet").attr("cx", d => d.R * d3.event.scale);
-      }));
+      .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
     container.selectAll(".orbit").data(planets).enter()
       .append("circle")
@@ -66,7 +66,7 @@ class View extends Component {
     this.interval = setInterval(() => {
       svg.selectAll(".planet_cluster")
         .attr("transform", d => {
-          return "rotate(" + (d.phi0 + (Date.now() - t0) * d.speed) + ")";
+          return "rotate(" + (Date.now() - t0) * d.speed + ")";
         });
     }, 100);
   }

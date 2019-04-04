@@ -13,7 +13,11 @@ body {
 
 .orbit {
   stroke: #eee;
-  fill: transparent;
+  fill: none;
+}
+.orbit:hover {
+  stroke: #ccc;
+  stroke-width: 3;
 }
 
 .planet {
@@ -24,4 +28,8 @@ body {
 .moon {
   stroke: #ccc;
   fill: #fff;
+}
+
+.ReactTable {
+  height: 100vh;
 }

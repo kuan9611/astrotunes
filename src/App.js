@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import View from './View';
+import Table from './Table';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {},
+      data: [],
     };
   }
 
@@ -23,10 +24,10 @@ class App extends Component {
   }
 
   updateData(raw) {
-    const data = raw
+    let data = raw
     .filter(p => {
       return p.planet_status === "Confirmed" &&
-        p.orbital_period && p.semi_major_axis;
+        p.orbital_period && p.semi_major_axis && p.star_name;
     })
     .map(p => ({
       name: p["# name"],
@@ -37,16 +38,21 @@ class App extends Component {
       star: p.star_name,
     }))
     .reduce((res, p) => {
-      (res[p.star] = res[p.star] || []).push(p);
+      (res[p.star] = res[p.star] || {
+        star: p.star,
+        planets: [],
+      }).planets.push(p);
       return res;
-    }, {});
+    }, {})
+    data = Object.values(data);
     this.setState({ data });
   }
 
   render() {
     return (
       <div className="App">
-        <View data={this.state.data} />
+        {/*<View data={this.state.data} />*/}
+        <Table data={this.state.data} />
       </div>
     );
   }
