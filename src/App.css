@@ -11,6 +11,10 @@ body {
   left: 250px;
 }
 
+.View>svg {
+  background: #000;
+}
+
 .hidden {
   display: none;
 }
@@ -20,26 +24,54 @@ body {
 }
 
 .orbit {
-  stroke: #eee;
+  stroke: #333;
   fill: none;
 }
-.orbit:hover {
-  stroke: #ccc;
+.orbit.hover {
+  stroke: #445;
+  stroke-width: 3;
+}
+.orbit.selected {
+  stroke: #558;
   stroke-width: 3;
 }
 
 .planet {
-  stroke: #666;
+  stroke: #fff;
   fill: #fff;
 }
-
-.moon {
-  stroke: #ccc;
-  fill: #fff;
+.planet.hover {
+  stroke: #ccf;
+  fill: #ccf;
+}
+.planet.selected {
+  stroke: #88f;
+  fill: #88f;
 }
 
+.info-card {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 300px;
+  color: #fff;
+  background-color: #0008 !important;
+}
+.info-card span {
+  color: #fff !important;
+}
+.info-card-link {
+  position: absolute !important;
+  right: 8px;
+}
+
+.Table {
+  width: 250px;
+}
 .ReactTable {
   height: 95vh;
-  width: 250px;
   font-size: 12px;
+}
+.select-bar button {
+  width: 50%;
 }

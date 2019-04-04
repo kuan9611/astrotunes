@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Info from './Info';
 import * as d3 from "d3";
 
 class View extends Component {
@@ -6,6 +7,9 @@ class View extends Component {
     super(props);
     this.planets = [];
     this.view = React.createRef();
+    this.state = {
+      selection: null,
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -26,12 +30,12 @@ class View extends Component {
       planets.push(x.planets.map(p => ({
         ...p,
         R: p.dist * 100,
-        r: Math.sqrt(p.mass) || p.radius,
-        speed: 1/p.period,
+        r: Math.sqrt(p.mass) || p.radi,
+        v: 1/p.perd,
         hidden: !x.selected,
       })));
     });
-    this.planets = planets.flat();
+    this.planets = planets.flat().map((p, i) => ({...p, i}));
   }
 
   makeView() {
@@ -59,23 +63,42 @@ class View extends Component {
     const container = svg.append("g")
       .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
+    const handleHover = (d, enter) => {
+      d3.select(`#o${d.i}`).classed("hover", enter);
+      d3.select(`#p${d.i}`).classed("hover", enter);
+    }
+    const handleClick = d => {
+      this.clearSelected();
+      this.setState({ selection: d });
+      d3.select(`#o${d.i}`).classed("selected", true);
+      d3.select(`#p${d.i}`).classed("selected", true);
+    }
+
     container.selectAll(".orbit").data(this.planets).enter()
       .append("circle")
         .attr("r", d => d.R)
-        .attr("class", "orbit");
+        .attr("id", d => `o${d.i}`)
+        .attr("class", "orbit")
+        .on("mouseover", d => handleHover(d, true))
+        .on("mouseout", d => handleHover(d, false))
+        .on("click", d => handleClick(d));
     container.selectAll(".planet_cluster").data(this.planets).enter()
       .append("g")
         .attr("class", "planet_cluster")
       .append("circle")
         .attr("r", d => d.r)
         .attr("cx", d => d.R)
-        .attr("class", "planet");
+        .attr("id", d => `p${d.i}`)
+        .attr("class", "planet")
+        .on("mouseover", d => handleHover(d, true))
+        .on("mouseout", d => handleHover(d, false))
+        .on("click", d => handleClick(d));
     this.updateView();
 
     this.interval = setInterval(() => {
       svg.selectAll(".planet_cluster")
         .attr("transform", d => {
-          return "rotate(" + (Date.now() - t0) * d.speed + ")";
+          return "rotate(" + (Date.now() - t0) * d.v + ")";
         });
     }, 100);
   }
@@ -86,18 +109,27 @@ class View extends Component {
     svg.selectAll(".planet_cluster").classed("hidden", d => d.hidden);
   }
 
-  updateSelection() {
+  clearSelected() {
+    d3.selectAll(".orbit.selected").classed("selected", false);
+    d3.selectAll(".planet.selected").classed("selected", false);
+    this.setState({ selection: null });
+  }
+
+  render() {
     this.planets.forEach(p => {
       p.hidden = !this.props.data[p.star].selected;
     });
     this.updateView();
-  }
-
-  render() {
-    this.updateSelection();
+    const selection = this.state.selection;
     return (
       <div className="View">
         <svg ref={this.view} />
+        {selection && !selection.hidden &&
+          <Info
+            info={selection}
+            closeListener={() => this.clearSelected()}
+          />
+        }
       </div>
     )
   }

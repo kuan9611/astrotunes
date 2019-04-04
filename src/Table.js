@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
+import Button from '@material-ui/core/Button';
 import 'react-table/react-table.css';
 
 class Table extends Component {
@@ -64,8 +65,12 @@ class Table extends Component {
           noDataText="No results found"
         />
         <div className="select-bar">
-          <button onClick={() => this.updateSelection(true)}>Select All</button>
-          <button onClick={() => this.updateSelection(false)}>Deselect All</button>
+          <Button size="small" onClick={() => this.updateSelection(true)}>
+            Select All
+          </Button>
+          <Button size="small" onClick={() => this.updateSelection(false)}>
+            Deselect All
+          </Button>
         </div>
       </div>
     );

@@ -32,9 +32,12 @@ class App extends Component {
     .map(p => ({
       name: p["# name"].trim(),
       mass: p.mass,
-      radius: p.radius,
-      period: p.orbital_period,
+      radi: p.radius,
+      perd: p.orbital_period,
       dist: p.semi_major_axis,
+      ecct: p.eccentricity,
+      type: p.detection_type,
+      year: p.discovered,
       star: p.star_name.trim(),
     }))
     .reduce((res, p) => {
