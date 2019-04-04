@@ -3,11 +3,26 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 
 class Table extends Component {
+  constructor(props) {
+    super(props);
+    this.table = React.createRef();
+  }
+
+  updateSelection(selected) {
+    if (this.table.current) {
+      const data = this.table.current.getResolvedState().sortedData;
+      this.props.selectionChangeListener({
+        selected,
+        selections: data.map(d => d.star),
+      });
+    }
+  }
+
   render() {   
     const columns = [{
       Header: "Star Name",
       accessor: "star",
-      width: 250,
+      width: 150,
     }, {
       id: "pCount",
       Header: "# Planets",
@@ -20,30 +35,39 @@ class Table extends Component {
       const qry = filter.value.toLowerCase();
       return src === undefined || String(src).toLowerCase().includes(qry);
     };
+
+    const trProps = (state, rowInfo) => {
+      return (rowInfo && rowInfo.original?
+        {
+          onClick: () => this.props.selectionChangeListener({
+            selected: !rowInfo.original.selected,
+            selections: [rowInfo.original.star],
+          }),
+          style: {
+            background: rowInfo.original.selected? "#eee" : "#fff",
+          }
+        } : {});
+    };
    
     return (
-      <ReactTable
-        data={Object.values(this.props.data)}
-        columns={columns}
-        width={400}
-        showPageSizeOptions={false}
-        resizable={false}
-        filterable={true}
-        defaultFilterMethod={filterCaseInsensitive}
-        noDataText="No results found"
-        getTrProps={(state, rowInfo) => {
-          return (rowInfo && rowInfo.original?
-            {
-              onClick: () => this.props.selectionChangeListener({
-                selected: !rowInfo.original.selected,
-                selections: [rowInfo.original.star],
-              }),
-              style: {
-                background: rowInfo.original.selected? '#eee' : '#fff',
-              }
-            } : {});
-        }}
-      />
+      <div className="Table">
+        <ReactTable
+          ref={this.table}
+          data={Object.values(this.props.data)}
+          columns={columns}
+          showPageSizeOptions={false}
+          resizable={false}
+          filterable={true}
+          defaultFilterMethod={filterCaseInsensitive}
+          getTrProps={trProps}
+          pageText=""
+          noDataText="No results found"
+        />
+        <div className="select-bar">
+          <button onClick={() => this.updateSelection(true)}>Select All</button>
+          <button onClick={() => this.updateSelection(false)}>Deselect All</button>
+        </div>
+      </div>
     );
   }
 }

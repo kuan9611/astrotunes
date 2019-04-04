@@ -4,8 +4,8 @@ import * as d3 from "d3";
 class View extends Component {
   constructor(props) {
     super(props);
-    this.node = React.createRef();
     this.planets = [];
+    this.view = React.createRef();
   }
 
   componentDidUpdate(prevProps) {
@@ -38,10 +38,10 @@ class View extends Component {
     clearInterval(this.interval);
     const t0 = new Date().setHours(0,0,0,0);
 
-    const w = window.innerWidth - 350;
+    const w = window.innerWidth - 250;
     const h = window.innerHeight;
 
-    const svg = d3.select(this.node.current)
+    const svg = d3.select(this.view.current)
       .attr("width", w)
       .attr("height", h)
       .call(d3.behavior.zoom().on("zoom", () => {
@@ -51,7 +51,7 @@ class View extends Component {
     svg.selectAll("*").remove();
 
     svg.append("circle")
-      .attr("r", 10)
+      .attr("r", 1)
       .attr("cx", w/2)
       .attr("cy", h/2)
       .attr("id", "sun");
@@ -81,7 +81,7 @@ class View extends Component {
   }
 
   updateView() {
-    const svg = d3.select(this.node.current);
+    const svg = d3.select(this.view.current);
     svg.selectAll(".orbit").classed("hidden", d => d.hidden);
     svg.selectAll(".planet_cluster").classed("hidden", d => d.hidden);
   }
@@ -97,7 +97,7 @@ class View extends Component {
     this.updateSelection();
     return (
       <div className="View">
-        <svg ref={this.node} />
+        <svg ref={this.view} />
       </div>
     )
   }

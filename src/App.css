@@ -8,7 +8,7 @@ body {
 
 .View {
   position: absolute;
-  left: 350px;
+  left: 250px;
 }
 
 .hidden {
@@ -16,8 +16,7 @@ body {
 }
 
 #sun {
-  stroke: #666;
-  fill: #666;
+  fill: #c00;
 }
 
 .orbit {
@@ -40,6 +39,7 @@ body {
 }
 
 .ReactTable {
-  height: 100vh;
-  width: 350px;
+  height: 95vh;
+  width: 250px;
+  font-size: 12px;
 }
