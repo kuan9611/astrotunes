@@ -6,6 +6,15 @@ body {
   overflow: hidden;
 }
 
+.View {
+  position: absolute;
+  left: 350px;
+}
+
+.hidden {
+  display: none;
+}
+
 #sun {
   stroke: #666;
   fill: #666;
@@ -32,4 +41,5 @@ body {
 
 .ReactTable {
   height: 100vh;
+  width: 350px;
 }

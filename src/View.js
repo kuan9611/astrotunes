@@ -5,33 +5,41 @@ class View extends Component {
   constructor(props) {
     super(props);
     this.node = React.createRef();
+    this.planets = [];
   }
 
-  componentDidMount() {
-    this.redraw();
+  componentDidUpdate(prevProps) {
+    if (Object.keys(prevProps.data).length < 
+      Object.keys(this.props.data).length) {
+      this.makePlanets();
+      this.makeView();
+    }
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  redraw() {
+  makePlanets() {
+    const planets = [];
+    Object.values(this.props.data).forEach(x => {
+      planets.push(x.planets.map(p => ({
+        ...p,
+        R: p.dist * 100,
+        r: Math.sqrt(p.mass) || p.radius,
+        speed: 1/p.period,
+        hidden: !x.selected,
+      })));
+    });
+    this.planets = planets.flat();
+  }
+
+  makeView() {
     clearInterval(this.interval);
     const t0 = new Date().setHours(0,0,0,0);
 
-    const w = window.innerWidth;
+    const w = window.innerWidth - 350;
     const h = window.innerHeight;
-
-    let planets = [];
-    this.props.data.forEach(x => {
-      planets.push(x.planets.map(p => ({
-        R: p.dist * 100,
-        r: Math.sqrt(p.mass) || p.radius,
-        speed: 0.1/p.period,
-        name: p.name,
-      })));
-    });
-    planets = planets.flat();
 
     const svg = d3.select(this.node.current)
       .attr("width", w)
@@ -51,17 +59,18 @@ class View extends Component {
     const container = svg.append("g")
       .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
-    container.selectAll(".orbit").data(planets).enter()
+    container.selectAll(".orbit").data(this.planets).enter()
       .append("circle")
         .attr("r", d => d.R)
         .attr("class", "orbit");
-    container.selectAll("g.planet_cluster").data(planets).enter()
+    container.selectAll(".planet_cluster").data(this.planets).enter()
       .append("g")
         .attr("class", "planet_cluster")
       .append("circle")
         .attr("r", d => d.r)
         .attr("cx", d => d.R)
         .attr("class", "planet");
+    this.updateView();
 
     this.interval = setInterval(() => {
       svg.selectAll(".planet_cluster")
@@ -71,10 +80,23 @@ class View extends Component {
     }, 100);
   }
 
+  updateView() {
+    const svg = d3.select(this.node.current);
+    svg.selectAll(".orbit").classed("hidden", d => d.hidden);
+    svg.selectAll(".planet_cluster").classed("hidden", d => d.hidden);
+  }
+
+  updateSelection() {
+    this.planets.forEach(p => {
+      p.hidden = !this.props.data[p.star].selected;
+    });
+    this.updateView();
+  }
+
   render() {
-    this.redraw();
+    this.updateSelection();
     return (
-      <div>
+      <div className="View">
         <svg ref={this.node} />
       </div>
     )

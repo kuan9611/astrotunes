@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      data: {},
     };
   }
 
@@ -30,29 +30,42 @@ class App extends Component {
         p.orbital_period && p.semi_major_axis && p.star_name;
     })
     .map(p => ({
-      name: p["# name"],
+      name: p["# name"].trim(),
       mass: p.mass,
       radius: p.radius,
       period: p.orbital_period,
       dist: p.semi_major_axis,
-      star: p.star_name,
+      star: p.star_name.trim(),
     }))
     .reduce((res, p) => {
       (res[p.star] = res[p.star] || {
         star: p.star,
         planets: [],
+        selected: true,
       }).planets.push(p);
       return res;
     }, {})
-    data = Object.values(data);
     this.setState({ data });
+  }
+
+  handleSelectionChange(s) {
+    const newData = {...this.state.data};
+    s.selections.forEach(star => {
+      newData[star].selected = s.selected;
+    });
+    this.setState({ data: newData });
   }
 
   render() {
     return (
       <div className="App">
-        {/*<View data={this.state.data} />*/}
-        <Table data={this.state.data} />
+        <View
+          data={this.state.data}
+        />
+        <Table
+          data={this.state.data}
+          selectionChangeListener={s => this.handleSelectionChange(s)}
+        />
       </div>
     );
   }
