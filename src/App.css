@@ -8,12 +8,13 @@ body {
 .View>svg { background: #000; }
 .hidden { display: none; }
 #sun { fill: #c00; }
-.orbit { stroke: #333; fill: none; }
-.orbit.hover { stroke: #445; stroke-width: 3; }
-.orbit.selected { stroke: #558; stroke-width: 3; }
-.planet { stroke: #fff; fill: #fff; }
-.planet.hover { stroke: #ccf; fill: #ccf; }
-.planet.selected { stroke: #88f; fill: #88f; }
+.orbit { stroke: #222; fill: none; }
+.orbit.hover { stroke: #334; stroke-width: 3; }
+.orbit.selected { stroke: #446; stroke-width: 3; }
+.planet { stroke-width: 0; fill: #ffffffaa; }
+.planet.hover { fill: #ccccffcc; }
+.planet.selected { fill: #88f; }
+.dist-axis * { stroke: #fff !important; }
 
 .info-card {
   position: absolute;
