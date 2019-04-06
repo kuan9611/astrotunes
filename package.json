@@ -5,6 +5,9 @@
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
+    "d3": "^5.9.2",
+    "d3-axis": "^1.0.12",
+    "d3-scale": "^3.0.0",
     "papaparse": "^4.6.3",
     "react": "^16.8.4",
     "react-d3-library": "^1.1.8",

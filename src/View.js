@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Info from './Info';
 import * as d3 from 'd3';
+import * as tones from './simpleTones';
 
 class View extends Component {
   constructor(props) {
@@ -122,7 +123,12 @@ class View extends Component {
     this.interval = setInterval(() => {
       svg.selectAll(".planet_cluster")
         .attr("transform", d => {
-          return `rotate(${(Date.now() - t0) * d.v})`;
+          const prev = (Date.now() - t0 - 100) * d.v;
+          const curr = (Date.now() - t0) * d.v;
+          if (!d.hidden && Math.floor(prev/360) !== Math.floor(curr/360)) {
+            tones.playTone();
+          }
+          return `rotate(${curr})`;
         });
     }, 100);
   }
